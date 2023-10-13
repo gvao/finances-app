@@ -1,0 +1,13 @@
+@import url('./reset.css');
+
+html {
+    border: 2px solid;
+    min-height: 100%;
+}
+
+body {
+    background-color: #2b2b2b;
+    color: #b2b2b2;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
