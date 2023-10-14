@@ -1,4 +1,5 @@
 @import url('./reset.css');
+@import url('./variables.css');
 
 html {
     border: 2px solid;
@@ -10,4 +11,8 @@ body {
     color: #b2b2b2;
 
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    padding: 16px;
 }

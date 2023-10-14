@@ -1,0 +1,5 @@
+:root {
+    /* padding */
+    --pad-default: 1.6rem;
+    --pad-med: calc( var(var(--pad-default)) / 2 )
+}
