@@ -13,12 +13,16 @@ export default async function localStorageRepository(
   }
 
   async function getAll() {
-    const data = localStorage.getItem(repositoryName);
-    if (!data) {
-      throw new Error(`Not found ${repositoryName} in local database`);
-    }
+    try {
+      const data = localStorage.getItem(repositoryName);
+      if (!data) {
+        throw new Error(`Not found ${repositoryName} in local database`);
+      }
 
-    return await JSON.parse(data);
+      return await JSON.parse(data);
+    } catch (err) {
+      return [];
+    }
   }
 
   return {
