@@ -6,8 +6,10 @@ export default async function localStorageRepository(
 ): Promise<Repository> {
   const accounts: Account[] = (await getAll()) || [];
 
+  const save = () => localStorage.setItem(repositoryName, JSON.stringify(accounts));
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function save(data: any) {
+  async function add(data: any) {
     accounts.push(data);
     localStorage.setItem(repositoryName, JSON.stringify(accounts));
   }
@@ -25,8 +27,15 @@ export default async function localStorageRepository(
     }
   }
 
+  async function deleteById(id: string){
+    const index = accounts.findIndex(account => account.id === id)
+    accounts.splice(index, 1)
+    save()
+  }
+
   return {
-    save,
+    add,
     getAll,
+    deleteById,
   };
 }

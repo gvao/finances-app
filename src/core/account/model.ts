@@ -1,6 +1,7 @@
 import Id from "../shared/id.ts";
 
-export interface Account {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Account extends Record<string, any> {
   name: string;
   total: number;
   createAt?: Date;
