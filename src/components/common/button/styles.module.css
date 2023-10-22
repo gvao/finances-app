@@ -1,0 +1,7 @@
+
+.button {
+    padding: 8px;
+    border: none;
+    border-radius: var(--radius-default);
+    box-shadow: var(--shadow-default);
+}
