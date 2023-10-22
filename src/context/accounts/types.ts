@@ -7,6 +7,6 @@ export type ProviderAccountContextProps = {
 
 export type AccountContextProps = {
 	accounts: Account[];
-	addAccount?: (newAccount: Account) => void;
-	deleteAccount?: (id: string) => void;
+	addAccount: (newAccount: Partial<Account>) => void;
+	deleteAccount: (id: string) => void;
 };

@@ -1,26 +1,26 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { AccountContextProps, ProviderAccountContextProps } from "./types.ts";
 import { Account } from "../../core/account/model.ts";
 import localStorageRepository from "../../external/repository/localStorageRepository.ts";
 import {
 	deleteAccountById,
 	getAllAccounts,
-	saveAccount,
+	insertAccount,
 } from "../../core/account/use-cases/index.ts";
 
-
-const INITIAL: AccountContextProps = {
+const INITIAL = {
 	accounts: [],
 };
 
-export const AccountContext = createContext(INITIAL);
+export const AccountContext = createContext({} as AccountContextProps);
+export const useAccountContext = () => useContext(AccountContext);
 
 export default function ProviderAccountContext({
 	children,
 }: ProviderAccountContextProps) {
-	const [accounts, setAccounts] = useState<Account[]>([]);
+	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
 
-	const repository = localStorageRepository("contas");
+	const repository = localStorageRepository("accounts");
 
 	useEffect(() => {
 		(async () => {
@@ -30,13 +30,12 @@ export default function ProviderAccountContext({
 		})();
 	}, []);
 
-	async function addAccount(newAccount: Account) {
-        saveAccount(await repository, { name: "teste", total: 100 });
-		setAccounts((state) => ({ ...state, newAccount }));
+	async function addAccount(newAccount: Partial<Account>) {
+		const createdAccount = insertAccount(await repository, newAccount);
+		setAccounts((state) => ([ ...state, createdAccount ]));
 	}
 
 	async function deleteAccount(id: string) {
-
 		deleteAccountById(await repository, id);
 		setAccounts((state) => state.filter((account) => account.id !== id));
 	}
