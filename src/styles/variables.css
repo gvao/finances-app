@@ -2,4 +2,11 @@
     /* padding */
     --pad-default: 1.6rem;
     --pad-med: calc( var(var(--pad-default)) / 2 )
+    : 2px 2px 2px rgba(0, 0, 0, 0.3),
+
+    /* shadow */
+    --shadow-default: -2px -2px 2px rgba(255, 255, 255, 0.3);
+
+    /* radius */
+    --radius-default: 4px;
 }

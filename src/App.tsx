@@ -1,3 +1,4 @@
+import FormAccount from "./components/form-account";
 import { TableExpenses } from "./components/table";
 
 import "./styles/App.css";
@@ -9,6 +10,8 @@ function App() {
 				<h1>Finances</h1>
 				<h2>Minhas finança em um só lugar!</h2>
 			</header>
+
+			<FormAccount />
 
 			<TableExpenses />
 		</main>
