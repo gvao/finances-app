@@ -20,6 +20,6 @@ jobs:
               uses: actions/setup-node@v3
             - run: npm install
             - run: npm run deploy
-            - run: git config --global user.email "gvao@gmail.com"
+            - run: git config --global user.email "https://github.com/gvao"
             - run: git config --global user.name "Yuri Galvão"
           
