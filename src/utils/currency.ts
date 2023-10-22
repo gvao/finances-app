@@ -1,6 +1,6 @@
 export const transformCurrency = (
   value: number,
-  options: Intl.NumberFormatOptions,
+  options: Intl.NumberFormatOptions = {},
   locales: string = "pt-Br"
 ) =>
   new Intl.NumberFormat(locales, {
