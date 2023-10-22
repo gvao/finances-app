@@ -1,5 +1,5 @@
 import FormAccount from "./components/form-account";
-import { TableExpenses } from "./components/table";
+import { TableExpenses } from "./components/table-account";
 
 import "./styles/App.css";
 
