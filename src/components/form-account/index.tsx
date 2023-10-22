@@ -1,13 +1,28 @@
-import { FormEvent } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "./styles.module.css";
+import { useAccountContext } from "../../context/accounts";
+import { Account } from "../../core/account";
 
 export default function FormAccount() {
-    
-    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+	const [data, setData] = useState<Partial<Account>>({
+		name: "",
+		total: 0,
+	});
+	const { addAccount } = useAccountContext();
 
-        console.log(`FormAccount has been submitted successfully `)
-    }
+	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		addAccount(data);
+
+		console.log(`Account additing successfully`);
+	};
+
+	const onChangeInput = ({
+		target: { id, value },
+	}: ChangeEvent<HTMLInputElement>) => {
+		setData((state) => ({ ...state, [id]: value }));
+	};
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>
@@ -15,23 +30,29 @@ export default function FormAccount() {
 
 			<div className={styles.inputs}>
 				<input
-                className={styles.field}
+					onChange={onChangeInput}
+					className={styles.field}
 					type="text"
 					name="name"
 					id="name"
 					placeholder="Titulo para conta"
-                    autoFocus
+					value={data.name || ""}
+					autoFocus
 				/>
 				<input
-                className={styles.field}
+					onChange={onChangeInput}
+					className={styles.field}
 					type="text"
 					name="total"
 					id="total"
 					placeholder="Valor da conta"
+					value={data.total || ""}
 				/>
 			</div>
 
-			<button type="submit" className={styles.formButton} >Adicionar</button>
+			<button type="submit" className={styles.formButton}>
+				Adicionar
+			</button>
 		</form>
 	);
 }
