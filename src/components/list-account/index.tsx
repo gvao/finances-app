@@ -1,6 +1,6 @@
-import { Account } from "../core/account";
-import styles from "../styles/despesas.module.css"
-import { transformCurrency, transformDate } from "../utils";
+import { Account } from "../../core/account";
+import styles from "./styles.module.css"
+import { transformCurrency, transformDate } from "../../utils";
 
 export const ListExpenses = ({ accounts }: { accounts: Account[] }) => (
 	<ul className={styles.Expenses}>
