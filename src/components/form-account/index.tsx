@@ -32,7 +32,7 @@ function useFormAccount() {
 	};
 }
 
-export default function FormAccount() {
+export function FormAccount() {
 
 	const { data, onSubmit, onChangeInput } = useFormAccount();
 
