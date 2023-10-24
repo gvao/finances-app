@@ -1,9 +1,10 @@
-import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "./styles.module.css";
+
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useAccountContext } from "../../context/accounts";
 import { Account } from "../../core/account";
 
-export default function FormAccount() {
+function useFormAccount() {
 	const [data, setData] = useState<Partial<Account>>({
 		name: "",
 		total: 0,
@@ -23,6 +24,17 @@ export default function FormAccount() {
 	}: ChangeEvent<HTMLInputElement>) => {
 		setData((state) => ({ ...state, [id]: value }));
 	};
+
+	return {
+		data,
+		onSubmit,
+		onChangeInput,
+	};
+}
+
+export default function FormAccount() {
+
+	const { data, onSubmit, onChangeInput } = useFormAccount();
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>
