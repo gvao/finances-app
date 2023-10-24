@@ -1,5 +1,4 @@
-import FormAccount from "./components/form-account";
-import { TableExpenses } from "./components/table-account";
+import { FormAccount, MonthSummary, TableExpenses } from "./components";
 
 import "./styles/App.css";
 
@@ -11,11 +10,14 @@ function App() {
 				<h2>Minhas finança em um só lugar!</h2>
 			</header>
 
+			<MonthSummary />
+
 			<FormAccount />
 
 			<TableExpenses />
 		</main>
 	);
 }
+
 
 export default App;

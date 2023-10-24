@@ -1,0 +1,11 @@
+.wrap {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: x-large;
+}
+
+.value {
+    font-size: xx-large;
+    font-weight: bold;
+}
