@@ -54,7 +54,8 @@ export function FormAccount() {
 				<input
 					onChange={onChangeInput}
 					className={styles.field}
-					type="text"
+					type="number"
+					step={0.05}
 					name="total"
 					id="total"
 					placeholder="Valor da conta"
