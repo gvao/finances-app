@@ -1,8 +1,40 @@
 .container {
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--sm);
     padding: 16px;
-
+    margin: 0 auto;
+    
     display: flex;
     flex-direction: column;
     gap: 40px;
 }
+
+/* @media (max-width: 640px) {
+    .container {
+        background-color: red;
+    }
+} */
+
+@media (min-width: 768px) {
+    .container {
+        max-width: var(--md);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: var(--lg);
+    }
+}
+
+/* @media (max-width: 1280px) {
+    .container {
+        max-width: var(--xl);
+    }
+}
+
+@media (max-width: 1536px) {
+    .container {
+        max-width: var(--2xl);
+    }
+} */
