@@ -1,0 +1,14 @@
+.addButton {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+
+    background-color: var(--color-secondary);
+
+    width: 80px;
+    height: 80px;
+    aspect-ratio: 1;
+
+    margin: 16px;
+    cursor: pointer;
+}

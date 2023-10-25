@@ -1,4 +1,4 @@
-import { FormAccount, Header, MonthSummary, TableExpenses } from "./components";
+import { Header, MonthSummary, TableExpenses } from "./components";
 
 import "./styles/App.css";
 
@@ -8,8 +8,6 @@ function App() {
 			<Header />
 
 			<MonthSummary />
-
-			<FormAccount />
 
 			<TableExpenses />
 		</main>

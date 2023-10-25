@@ -6,8 +6,8 @@ html {
 }
 
 body {
-    background-color: #2b2b2b;
-    color: #b2b2b2;
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
 
     font-family: Arial, Helvetica, sans-serif;
 }

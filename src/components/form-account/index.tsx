@@ -9,14 +9,17 @@ function useFormAccount() {
 		name: "",
 		total: 0,
 	});
-	const { addAccount } = useAccountContext();
+	const { addAccount, changeShowForm } = useAccountContext();
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		const elem = event.target as HTMLFormElement
 
 		addAccount(data);
+		changeShowForm()
 
 		console.log(`Account additing successfully`);
+		elem.reset()
 	};
 
 	const onChangeInput = ({

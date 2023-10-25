@@ -9,4 +9,5 @@ export type AccountContextProps = {
 	accounts: Account[];
 	addAccount: (newAccount: Partial<Account>) => void;
 	deleteAccount: (id: string) => void;
+	changeShowForm: () => void;
 };
