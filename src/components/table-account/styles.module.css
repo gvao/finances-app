@@ -1,6 +1,10 @@
 .table {
     width: 100%;
-    /* padding: 16px; */
+}
+
+.table thead tr {
+    /* background-color: red; */
+    padding-bottom: 16px;
 }
 
 .body {
@@ -9,18 +13,34 @@
 
 .row {
     padding: 4px 0;
+    position: relative;
+}
+
+.row:after {
+    content: '';
+    
+    width: 90%;
+    height: 2px;
+    
+    margin: 0 auto;
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .cell {
-    padding: 8px;
-    border-bottom: 1px solid;
+    border-bottom: 0.5 solid rgba(255, 255, 255, 0.9);
 }
 
 .trashIcon {
-    width: 35px;
+    width: 24px;
+    margin: 4px;
 
-    fill: var(--color-secondary);
     background-color: red;
-    
+    fill: var(--color-secondary);
+
     border-radius: 6px;
 }

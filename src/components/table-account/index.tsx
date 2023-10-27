@@ -36,11 +36,10 @@ function TableRow({ account, ...props }: { account: Account }) {
 
 	return (
 		<tr {...props} className={styles.row}>
-			<td className={styles.cell}>{dateFormatted}</td>
-			<td className={styles.cell}>{name}</td>
-			<td className={styles.cell}>R$ {transformCurrency(total)}</td>
-
-			<td className={styles.cell}>
+			<td className={styles.cell} >{dateFormatted}</td>
+			<td className={styles.cell} >{name}</td>
+			<td className={styles.cell} >R$ {transformCurrency(total)}</td>
+			<td className={styles.cell} >
 				<TrashIcon onClick={deleteAccountOnClick} />
 			</td>
 		</tr>
