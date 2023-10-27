@@ -70,11 +70,10 @@ export default function ProviderAccountContext({
 	return (
 		<AccountContext.Provider
 			value={{
-				accounts,
+				accountsOfMonth,
 				addAccount,
 				deleteAccount,
 				changeShowForm,
-				accountsOfMonth,
 				nextMonth,
 				prevMonth,
 				getCurrentDate,
