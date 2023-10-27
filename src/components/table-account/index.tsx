@@ -1,6 +1,6 @@
 import { Account } from "../../core/account/model";
 import { useAccountContext } from "../../context/accounts";
-import { transformCurrency, transformDate } from "../../utils";
+import { transformCurrency, FormatDate } from "../../utils";
 
 import styles from "./styles.module.css";
 
@@ -32,7 +32,7 @@ function TableRow({ account, ...props }: { account: Account }) {
 
 	const deleteAccountOnClick = () => deleteAccount!(id!);
 
-	const dateFormatted = transformDate(date, {
+	const dateFormatted = FormatDate(date, {
 		day: "2-digit",
 		month: "short",
 	});

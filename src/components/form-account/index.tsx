@@ -8,19 +8,19 @@ function useFormAccount() {
 	const [data, setData] = useState<Partial<Account>>({
 		name: "",
 		total: 0,
-		date: new Date,
+		date: new Date().toISOString(),
 	});
 
 	const { addAccount, changeShowForm } = useAccountContext();
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const elem = event.target as HTMLFormElement
+		const elem = event.target as HTMLFormElement;
 
 		addAccount(data);
-		changeShowForm()
+		changeShowForm();
 
-		elem.reset()
+		elem.reset();
 	};
 
 	const onChangeInput = ({
@@ -29,7 +29,6 @@ function useFormAccount() {
 		setData((state) => ({ ...state, [id]: value }));
 	};
 
-	console.log(data)
 	return {
 		data,
 		onSubmit,
@@ -38,8 +37,10 @@ function useFormAccount() {
 }
 
 export function FormAccount() {
-
 	const { data, onSubmit, onChangeInput } = useFormAccount();
+
+	const [date] = data.date!.split('T')
+	console.log(date)
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>
@@ -53,7 +54,7 @@ export function FormAccount() {
 					name="name"
 					id="name"
 					placeholder="Titulo para conta"
-					value={data.name || ""}
+					value={data.name}
 					autoFocus
 				/>
 				<input
@@ -64,10 +65,17 @@ export function FormAccount() {
 					name="total"
 					id="total"
 					placeholder="Valor da conta"
-					value={data.total || ""}
+					value={data.total}
 				/>
 
-				<input className={styles.field} type="date" name="date" id="date" onChange={onChangeInput} />
+				<input
+					className={styles.field}
+					type="date"
+					name="date"
+					id="date"
+					onChange={onChangeInput}
+					value={date || ""}
+				/>
 			</div>
 
 			<button type="submit" className={styles.formButton}>

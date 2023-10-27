@@ -1,6 +1,6 @@
 import { Account } from "../../core/account";
 import styles from "./styles.module.css"
-import { transformCurrency, transformDate } from "../../utils";
+import { transformCurrency, FormatDate } from "../../utils";
 
 export const ListExpenses = ({ accounts }: { accounts: Account[] }) => (
 	<ul className={styles.Expenses}>
@@ -13,7 +13,7 @@ export const ListExpenses = ({ accounts }: { accounts: Account[] }) => (
 						compactDisplay: "long",
 					})}
 				</p>
-				<p>{transformDate(account.createAt as Date)}</p>
+				<p>{FormatDate(account.createAt as Date)}</p>
 			</li>
 		))}
 	</ul>
