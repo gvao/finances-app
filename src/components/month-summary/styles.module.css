@@ -2,10 +2,18 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    font-size: x-large;
+    font-size: large;
+    flex-direction: column;
 }
 
 .value {
     font-size: xx-large;
     font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    width: 80%;
 }

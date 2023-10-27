@@ -5,20 +5,20 @@ import { transformCurrency, FormatDate } from "../../utils";
 import styles from "./styles.module.css";
 
 export const TableExpenses = () => {
-	const { accounts } = useAccountContext();
+	const { accountsOfMonth } = useAccountContext();
 
 	return (
 		<table className={styles.table}>
 			<thead>
 				<tr>
-					<th>Data</th>
+					<th>Dia</th>
 					<th>Descrição</th>
 					<th>Valor</th>
 					<th>actions</th>
 				</tr>
 			</thead>
 			<tbody className={styles.body}>
-				{accounts.map((account) => (
+				{accountsOfMonth.map((account) => (
 					<TableRow key={account.id} account={account} />
 				))}
 			</tbody>
@@ -32,10 +32,7 @@ function TableRow({ account, ...props }: { account: Account }) {
 
 	const deleteAccountOnClick = () => deleteAccount!(id!);
 
-	const dateFormatted = FormatDate(date, {
-		day: "2-digit",
-		month: "short",
-	});
+	const dateFormatted = FormatDate(date, { day: "2-digit" });
 
 	return (
 		<tr {...props} className={styles.row}>

@@ -11,6 +11,7 @@ import {
 
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
+import { FormatDate } from "../../utils/date.ts";
 
 const INITIAL = {
 	accounts: [],
@@ -24,6 +25,9 @@ export default function ProviderAccountContext({
 }: ProviderAccountContextProps) {
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
 	const [showForm, setShowForm] = useState<boolean>(false);
+	const [currentMonth, setCurrentMonth] = useState<number>(
+		new Date().getMonth()
+	);
 
 	const repository = localStorageRepository("accounts");
 
@@ -47,6 +51,22 @@ export default function ProviderAccountContext({
 		setAccounts((state) => state.filter((account) => account.id !== id));
 	}
 
+	const nextMonth = () => setCurrentMonth((month) => month + 1);
+
+	const prevMonth = () => setCurrentMonth((month) => month - 1);
+
+	const getCurrentDate = (options: Intl.DateTimeFormatOptions = {}) =>
+		FormatDate(new Date().setMonth(currentMonth), options);
+
+	const accountsOfMonth = accounts.filter((account) => {
+		const date = new Date(account.date);
+		
+		const isMonthMatch = date.getMonth() + 1 === Number(getCurrentDate({ month: "2-digit" }))
+		const isYearMatch = date.getFullYear() === Number(getCurrentDate({ year: "numeric" }))
+
+		return isMonthMatch && isYearMatch;
+	});
+
 	return (
 		<AccountContext.Provider
 			value={{
@@ -54,6 +74,10 @@ export default function ProviderAccountContext({
 				addAccount,
 				deleteAccount,
 				changeShowForm,
+				accountsOfMonth,
+				nextMonth,
+				prevMonth,
+				getCurrentDate,
 			}}
 		>
 			{children}
@@ -88,4 +112,3 @@ const AddButton = () => {
 		</svg>
 	);
 };
-
