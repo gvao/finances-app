@@ -13,7 +13,16 @@
 
 .actions {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
     gap: 24px;
-    width: 80%;
+    width: 100%;
+}
+
+.icon {
+    /* border: 2px solid; */
+    cursor: pointer;
+    width: calc( 4px * 13 );
 }
