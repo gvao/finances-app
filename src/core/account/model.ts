@@ -9,12 +9,13 @@ export interface Account extends Record<string, any> {
   id?: string;
 }
 
-export function CreateAccount({ name, total, id, date }: Partial<Account>): Account {
+export function CreateAccount({ name, total, id, date: dateAsString }: Partial<Account>): Account {
   
-  if(!name || !total || !date) throw new Error(`Name, date or total required`)
+  if(!name || !total || !dateAsString) throw new Error(`Name, date or total required`)
 
   
   const createAt = new Date();
+  const date = new Date(dateAsString)
   
   return {
     id: Id(id),
