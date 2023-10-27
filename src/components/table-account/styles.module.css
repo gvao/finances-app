@@ -15,3 +15,12 @@
     padding: 8px;
     border-bottom: 1px solid;
 }
+
+.trashIcon {
+    width: 35px;
+
+    fill: var(--color-secondary);
+    background-color: red;
+    
+    border-radius: 6px;
+}
