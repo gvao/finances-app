@@ -8,7 +8,9 @@ function useFormAccount() {
 	const [data, setData] = useState<Partial<Account>>({
 		name: "",
 		total: 0,
+		date: new Date,
 	});
+
 	const { addAccount, changeShowForm } = useAccountContext();
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -18,7 +20,6 @@ function useFormAccount() {
 		addAccount(data);
 		changeShowForm()
 
-		console.log(`Account additing successfully`);
 		elem.reset()
 	};
 
@@ -28,6 +29,7 @@ function useFormAccount() {
 		setData((state) => ({ ...state, [id]: value }));
 	};
 
+	console.log(data)
 	return {
 		data,
 		onSubmit,
@@ -64,6 +66,8 @@ export function FormAccount() {
 					placeholder="Valor da conta"
 					value={data.total || ""}
 				/>
+
+				<input className={styles.field} type="date" name="date" id="date" onChange={onChangeInput} />
 			</div>
 
 			<button type="submit" className={styles.formButton}>
