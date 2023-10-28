@@ -33,6 +33,8 @@ export default function ProviderAccountContext({
 	const currentDate = new Date();
 	currentDate.setMonth(currentMonth);
 
+	console.log(currentDate)
+
 	useEffect(() => {
 		(async () => {
 			const { records, balance: monthBalance } = await getSummaryMonth(

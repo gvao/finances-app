@@ -5,15 +5,12 @@ import { getLastItem } from "../../utils/getLastItem";
 
 export async function getSummaryMonth(
 	repository: Repository<Account>,
-	currentDate: Date | string
+	currentDate: Date
 ) {
 	const repo = await getAllAccounts(repository);
 
 	const records = repo.filter((account) => {
-		const date =
-			typeof currentDate === "string"
-				? new Date(currentDate)
-				: currentDate;
+		const date = currentDate;
 
 		const isMonthMatch =
 			date.getMonth() + 1 ===
@@ -26,15 +23,17 @@ export async function getSummaryMonth(
 		return isMonthMatch && isYearMatch;
 	});
 
-	const { balance } = getLastItem(records);
+	const lastRecord = getLastItem(records);
 
-	// const balance = records.reduce(
-	// 	(acc, account) => (acc = acc + +account.total),
-	// 	0
-	// );
+	if (!lastRecord) {
+		return {
+			balance: 0,
+			records,
+		};
+	}
 
 	return {
-		balance,
+		balance: lastRecord.balance,
 		records,
 	};
 }
