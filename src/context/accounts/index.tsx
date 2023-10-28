@@ -42,7 +42,7 @@ export default function ProviderAccountContext({
 	const changeShowForm = () => setShowForm((state) => !state);
 
 	async function addAccount(newAccount: Partial<Account>) {
-		const createdAccount = insertAccount(await repository, newAccount);
+		const createdAccount = await insertAccount(await repository, newAccount);
 		setAccounts((state) => [...state, createdAccount]);
 	}
 
