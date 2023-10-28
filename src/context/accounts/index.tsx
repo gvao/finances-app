@@ -10,7 +10,7 @@ import {
 
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
-import { getSummaryMonth } from "../../external/repository/getMonthSummary.ts";
+import { getSummaryMonth } from "../../core/service/getMonthSummary.ts";
 
 const INITIAL = {
 	accounts: [],

@@ -1,5 +1,5 @@
-import { Account, getAllAccounts } from "../../core/account";
-import { Repository } from "../../core/shared/repository";
+import { Account, getAllAccounts } from "../account";
+import { Repository } from "../shared/repository";
 import { FormatDate } from "../../utils";
 import { getLastItem } from "../../utils/getLastItem";
 
