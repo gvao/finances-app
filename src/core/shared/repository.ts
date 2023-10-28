@@ -5,7 +5,5 @@ export interface Repository<T> {
   
   deleteById(id: string): Promise<void>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getAll(): Promise<T>;
-
-  getLastItem(): Promise<T>;
+  getAll(): Promise<Array<T>>;
 }

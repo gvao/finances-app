@@ -1,11 +1,14 @@
 import { Account, CreateAccount } from "..";
+import { getLastItem } from "../../../utils/getLastItem";
 import { Repository } from "../../shared/repository";
 
 export async function insertAccount(
 	repository: Repository<Account>,
 	{ name, total, date }: Partial<Account>
 ) {
-	const lastItem = await repository.getLastItem();
+	const records = await repository.getAll()
+
+	const lastItem = getLastItem(records);
 
 	let balance = Number(total);
 

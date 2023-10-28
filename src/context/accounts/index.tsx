@@ -5,13 +5,12 @@ import { Account } from "../../core/account/model.ts";
 import localStorageRepository from "../../external/repository/localStorageRepository.ts";
 import {
 	deleteAccountById,
-	getAllAccounts,
 	insertAccount,
 } from "../../core/account/use-cases/index.ts";
 
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
-import { FormatDate } from "../../utils/date.ts";
+import { getSummaryMonth } from "../../external/repository/getMonthSummary.ts";
 
 const INITIAL = {
 	accounts: [],
@@ -23,26 +22,35 @@ export const useAccountContext = () => useContext(AccountContext);
 export default function ProviderAccountContext({
 	children,
 }: ProviderAccountContextProps) {
+	const repository = localStorageRepository("accounts");
+	const indexMonth = new Date().getMonth();
+
+	const [currentMonth, setCurrentMonth] = useState<number>(indexMonth);
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
 	const [showForm, setShowForm] = useState<boolean>(false);
-	const [currentMonth, setCurrentMonth] = useState<number>(
-		new Date().getMonth()
-	);
+	const [balance, setBalance] = useState<number>(0);
 
-	const repository = localStorageRepository("accounts");
+	const currentDate = new Date();
+	currentDate.setMonth(currentMonth);
 
 	useEffect(() => {
 		(async () => {
-			const accounts = await getAllAccounts(await repository);
+			const { records, balance: monthBalance } = await getSummaryMonth(
+				await repository,
+				currentDate
+			);
 
-			setAccounts(accounts);
+			setAccounts(records);
+			setBalance(monthBalance);
 		})();
-	}, []);
+	}, [currentMonth, repository]);
 
-	const changeShowForm = () => setShowForm((state) => !state);
 
 	async function addAccount(newAccount: Partial<Account>) {
-		const createdAccount = await insertAccount(await repository, newAccount);
+		const createdAccount = await insertAccount(
+			await repository,
+			newAccount
+		);
 		setAccounts((state) => [...state, createdAccount]);
 	}
 
@@ -55,28 +63,20 @@ export default function ProviderAccountContext({
 
 	const prevMonth = () => setCurrentMonth((month) => month - 1);
 
-	const getCurrentDate = (options: Intl.DateTimeFormatOptions = {}) =>
-		FormatDate(new Date().setMonth(currentMonth), options);
-
-	const accountsOfMonth = accounts.filter((account) => {
-		const date = new Date(account.date);
-		
-		const isMonthMatch = date.getMonth() + 1 === Number(getCurrentDate({ month: "2-digit" }))
-		const isYearMatch = date.getFullYear() === Number(getCurrentDate({ year: "numeric" }))
-
-		return isMonthMatch && isYearMatch;
-	});
+	const changeShowForm = () => setShowForm((state) => !state);
 
 	return (
 		<AccountContext.Provider
 			value={{
-				accountsOfMonth,
+				accounts,
 				addAccount,
 				deleteAccount,
-				changeShowForm,
 				nextMonth,
 				prevMonth,
-				getCurrentDate,
+				currentDate,
+				balance,
+
+				changeShowForm,
 			}}
 		>
 			{children}

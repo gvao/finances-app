@@ -6,11 +6,12 @@ export type ProviderAccountContextProps = {
 };
 
 export type AccountContextProps = {
-	addAccount: (newAccount: Partial<Account>) => void;
-	deleteAccount: (id: string) => void;
-	changeShowForm: () => void;
-	accountsOfMonth: Account[];
-	nextMonth: () => void;
-	prevMonth: () => void;
-	getCurrentDate(options: Intl.DateTimeFormatOptions): string | null;
+	addAccount(newAccount: Partial<Account>): void;
+	deleteAccount(id: string): void;
+	changeShowForm(): void;
+	nextMonth(): void;
+	prevMonth(): void;
+	currentDate: Date;
+	balance: number;
+	accounts: Account[];
 };

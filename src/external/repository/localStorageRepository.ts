@@ -1,15 +1,6 @@
 import { Repository } from "../../core/shared/repository";
 import { Account } from "../../core/account/model";
-
-const makeObserver = () => {
-	const listeners: (() => void)[] = [];
-
-	return {
-		emit: () => listeners.forEach((listener) => listener()),
-
-		subscribe: (listener: () => void) => listeners.push(listener),
-	};
-};
+import { makeObserver } from "../../utils/observer";
 
 export default async function localStorageRepository(
 	repositoryName: string
@@ -62,12 +53,7 @@ export default async function localStorageRepository(
 		observer.emit();
 	}
 
-	async function getLastItem() {
-		return await accounts[accounts.length - 1];
-	}
-
 	return {
-		getLastItem,
 		add,
 		getAll,
 		deleteById,

@@ -1,18 +1,18 @@
 import { useAccountContext } from "../../context/accounts";
-import { transformCurrency } from "../../utils";
+import { FormatDate, transformCurrency } from "../../utils";
 import { ChevronLeft, ChevronRight } from "../../utils/icons";
 import styles from "./styles.module.css";
 
 export const MonthSummary = () => {
-	const { accountsOfMonth, nextMonth, prevMonth, getCurrentDate } =
+	const { nextMonth, prevMonth, balance, currentDate } =
 		useAccountContext();
 
-	const totalValue = accountsOfMonth.reduce(
-		(acc, account) => (acc = acc + +account.total),
-		0
-	);
+	const totalValue = balance
 
-	const labelMonth = getCurrentDate({ month: "long", year: "numeric" });
+	const labelMonth = FormatDate(currentDate, {
+		month: "long",
+		year: "numeric",
+	});
 
 	return (
 		<div className={styles.wrap}>

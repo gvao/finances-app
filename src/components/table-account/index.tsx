@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
 
 export const TableExpenses = () => {
-	const { accountsOfMonth } = useAccountContext();
+	const { accounts } = useAccountContext();
 
 	return (
 		<table className={styles.table}>
@@ -19,7 +19,7 @@ export const TableExpenses = () => {
 				</tr>
 			</thead>
 			<tbody className={styles.body}>
-				{accountsOfMonth.map((account) => (
+				{accounts.map((account) => (
 					<TableRow key={account.id} account={account} />
 				))}
 			</tbody>
