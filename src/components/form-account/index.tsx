@@ -39,7 +39,7 @@ function useFormAccount() {
 export function FormAccount() {
 	const { data, onSubmit, onChangeInput } = useFormAccount();
 
-	const [date] = data.date!.split('T')
+	const [dateDefault] = data.date!.split('.')
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>
@@ -69,11 +69,11 @@ export function FormAccount() {
 
 				<input
 					className={styles.field}
-					type="date"
+					type="datetime-local"
 					name="date"
 					id="date"
 					onChange={onChangeInput}
-					value={date || ""}
+					value={dateDefault || ""}
 				/>
 			</div>
 

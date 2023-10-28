@@ -43,8 +43,9 @@ export default function ProviderAccountContext({
 			setAccounts(records);
 			setBalance(monthBalance);
 		})();
-	}, [currentMonth, repository]);
+	}, [currentMonth]);
 
+	
 
 	async function addAccount(newAccount: Partial<Account>) {
 		const createdAccount = await insertAccount(
