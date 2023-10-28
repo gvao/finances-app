@@ -40,7 +40,6 @@ export function FormAccount() {
 	const { data, onSubmit, onChangeInput } = useFormAccount();
 
 	const [date] = data.date!.split('T')
-	console.log(date)
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>

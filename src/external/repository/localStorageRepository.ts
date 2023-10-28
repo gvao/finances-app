@@ -1,41 +1,75 @@
-import { Account } from "../../core/account/model";
 import { Repository } from "../../core/shared/repository";
+import { Account } from "../../core/account/model";
+
+const makeObserver = () => {
+	const listeners: (() => void)[] = [];
+
+	return {
+		emit: () => listeners.forEach((listener) => listener()),
+
+		subscribe: (listener: () => void) => listeners.push(listener),
+	};
+};
 
 export default async function localStorageRepository(
-  repositoryName: string
-): Promise<Repository> {
-  const accounts: Account[] = (await getAll()) || [];
+	repositoryName: string
+): Promise<Repository<Account>> {
+	const observer = makeObserver();
 
-  const save = () => localStorage.setItem(repositoryName, JSON.stringify(accounts));
+	const accounts: Account[] = (await getAll()) || [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function add(data: any) {
-    accounts.push(data);
-    localStorage.setItem(repositoryName, JSON.stringify(accounts));
-  }
+	const save = () => {
+		localStorage.setItem(repositoryName, JSON.stringify(accounts));
+    console.log('save accounts')
+	};
 
-  async function getAll() {
-    try {
-      const data = localStorage.getItem(repositoryName);
-      if (!data) {
-        throw new Error(`Not found ${repositoryName} in local database`);
-      }
+	const sortAccounts = () => {
+		accounts.sort(
+			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+		)
 
-      return await JSON.parse(data);
-    } catch (err) {
-      return [];
-    }
-  }
+    console.log('sorting accounts')
+	};
 
-  async function deleteById(id: string){
-    const index = accounts.findIndex(account => account.id === id)
-    accounts.splice(index, 1)
-    save()
-  }
+	observer.subscribe(sortAccounts);
+	observer.subscribe(save);
 
-  return {
-    add,
-    getAll,
-    deleteById,
-  };
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async function add(data: any) {
+		accounts.push(data);
+		observer.emit();
+	}
+
+	async function getAll() {
+		try {
+			const data = localStorage.getItem(repositoryName);
+
+			if (!data) {
+				throw new Error(
+					`Not found ${repositoryName} in local database`
+				);
+			}
+
+			return await JSON.parse(data);
+		} catch (err) {
+			return [];
+		}
+	}
+
+	async function deleteById(id: string) {
+		const index = accounts.findIndex((account) => account.id === id);
+		accounts.splice(index, 1);
+		observer.emit();
+	}
+
+	async function getLastItem() {
+		return await accounts[accounts.length - 1];
+	}
+
+	return {
+		getLastItem,
+		add,
+		getAll,
+		deleteById,
+	};
 }
