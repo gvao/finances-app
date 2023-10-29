@@ -5,12 +5,13 @@ import { Account } from "../../core/account/model.ts";
 import localStorageRepository from "../../external/repository/localStorageRepository.ts";
 import {
 	deleteAccountById,
+	getAllAccounts,
 	insertAccount,
 } from "../../core/account/use-cases/index.ts";
 
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
-import { getSummaryMonth } from "../../core/service/getMonthSummary.ts";
+import { FormatDate } from "../../utils/date.ts";
 
 const INITIAL = {
 	accounts: [],
@@ -28,26 +29,34 @@ export default function ProviderAccountContext({
 	const [currentMonth, setCurrentMonth] = useState<number>(indexMonth);
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
 	const [showForm, setShowForm] = useState<boolean>(false);
-	const [balance, setBalance] = useState<number>(0);
 
 	const currentDate = new Date();
 	currentDate.setMonth(currentMonth);
 
-	console.log(currentDate)
+	const getAccountByMonth = (date: Date) =>
+		accounts.filter((account) => {
+			const isMonthMatch =
+				date.getMonth() + 1 ===
+				Number(FormatDate(account.date, { month: "2-digit" }));
+
+			const isYearMatch =
+				date.getFullYear() ===
+				Number(FormatDate(account.date, { year: "numeric" }));
+
+			return isMonthMatch && isYearMatch;
+		});
+
+	const balance = accounts
+	.filter(account => new Date(account.date).getMonth() <= currentMonth)
+	.reduce((acc, account) => acc + +account.total, 0)
 
 	useEffect(() => {
 		(async () => {
-			const { records, balance: monthBalance } = await getSummaryMonth(
-				await repository,
-				currentDate
-			);
+			const allAccounts = await getAllAccounts(await repository);
 
-			setAccounts(records);
-			setBalance(monthBalance);
+			setAccounts(allAccounts);
 		})();
-	}, [currentMonth]);
-
-	
+	}, []);
 
 	async function addAccount(newAccount: Partial<Account>) {
 		const createdAccount = await insertAccount(
@@ -71,7 +80,7 @@ export default function ProviderAccountContext({
 	return (
 		<AccountContext.Provider
 			value={{
-				accounts,
+				accounts: getAccountByMonth(currentDate),
 				addAccount,
 				deleteAccount,
 				nextMonth,
