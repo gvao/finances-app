@@ -20,18 +20,23 @@ const INITIAL = {
 export const AccountContext = createContext({} as AccountContextProps);
 export const useAccountContext = () => useContext(AccountContext);
 
-export default function ProviderAccountContext({
-	children,
-}: ProviderAccountContextProps) {
+const useAccountContextProvider = () => {
 	const repository = localStorageRepository("accounts");
 	const indexMonth = new Date().getMonth();
 
 	const [currentMonth, setCurrentMonth] = useState<number>(indexMonth);
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
-	const [showForm, setShowForm] = useState<boolean>(false);
 
 	const currentDate = new Date();
 	currentDate.setMonth(currentMonth);
+
+	useEffect(() => {
+		(async () => {
+			const allAccounts = await getAllAccounts(await repository);
+
+			setAccounts(allAccounts);
+		})();
+	}, []);
 
 	const getAccountByMonth = (date: Date) =>
 		accounts.filter((account) => {
@@ -45,18 +50,6 @@ export default function ProviderAccountContext({
 
 			return isMonthMatch && isYearMatch;
 		});
-
-	const balance = accounts
-	.filter(account => new Date(account.date).getMonth() <= currentMonth)
-	.reduce((acc, account) => acc + +account.total, 0)
-
-	useEffect(() => {
-		(async () => {
-			const allAccounts = await getAllAccounts(await repository);
-
-			setAccounts(allAccounts);
-		})();
-	}, []);
 
 	async function addAccount(newAccount: Partial<Account>) {
 		const createdAccount = await insertAccount(
@@ -75,12 +68,43 @@ export default function ProviderAccountContext({
 
 	const prevMonth = () => setCurrentMonth((month) => month - 1);
 
+	const balance = accounts
+		.filter((account) => new Date(account.date).getMonth() <= currentMonth)
+		.reduce((acc, account) => acc + +account.total, 0);
+
+	return {
+		accounts: getAccountByMonth(currentDate),
+		addAccount,
+		deleteAccount,
+		nextMonth,
+		prevMonth,
+		currentDate,
+		balance,
+	};
+};
+
+export default function ProviderAccountContext({
+	children,
+}: ProviderAccountContextProps) {
+
+	const {
+		accounts,
+		addAccount,
+		deleteAccount,
+		nextMonth,
+		prevMonth,
+		currentDate,
+		balance,
+	} = useAccountContextProvider();
+
+	const [showForm, setShowForm] = useState<boolean>(false);
+
 	const changeShowForm = () => setShowForm((state) => !state);
 
 	return (
 		<AccountContext.Provider
 			value={{
-				accounts: getAccountByMonth(currentDate),
+				accounts,
 				addAccount,
 				deleteAccount,
 				nextMonth,
