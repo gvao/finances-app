@@ -1,0 +1,10 @@
+.trashIcon {
+    width: 24px;
+    margin: 4px;
+
+    background-color: red;
+    fill: var(--color-secondary);
+
+    border-radius: 6px;
+    cursor: pointer;
+}

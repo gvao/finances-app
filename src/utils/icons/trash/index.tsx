@@ -1,8 +1,9 @@
-
+import styles from "./styles.module.css"
 
 export const TrashIcon = ({ ...props }) => (
 	<svg
 		{...props}
+		className={styles.trashIcon}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 24 24"
 		fill="currentColor"

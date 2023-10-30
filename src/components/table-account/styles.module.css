@@ -34,13 +34,3 @@
 .cell {
     border-bottom: 0.5 solid rgba(255, 255, 255, 0.9);
 }
-
-.trashIcon {
-    width: 24px;
-    margin: 4px;
-
-    background-color: red;
-    fill: var(--color-secondary);
-
-    border-radius: 6px;
-}
