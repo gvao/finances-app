@@ -72,6 +72,10 @@ const useAccountContextProvider = () => {
 		.filter((account) => new Date(account.date).getMonth() <= currentMonth)
 		.reduce((acc, account) => acc + +account.total, 0);
 
+	accounts.sort(
+		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+	);
+
 	return {
 		accounts: getAccountByMonth(currentDate),
 		addAccount,
@@ -86,7 +90,6 @@ const useAccountContextProvider = () => {
 export default function ProviderAccountContext({
 	children,
 }: ProviderAccountContextProps) {
-
 	const {
 		accounts,
 		addAccount,
