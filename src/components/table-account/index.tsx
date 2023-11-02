@@ -4,6 +4,7 @@ import { transformCurrency, FormatDate } from "../../utils";
 
 import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
+import { FocusEvent, useState } from "react";
 
 export const TableExpenses = () => {
 	const { accounts } = useAccountContext();
@@ -28,22 +29,35 @@ export const TableExpenses = () => {
 };
 
 function TableRow({ account, ...props }: { account: Account }) {
+	const [ data, setData ] = useState(account)
 	const { deleteAccount } = useAccountContext();
-	const { name, total, id, date } = account;
 
-	const deleteAccountOnClick = () => deleteAccount!(id!);
+	const deleteAccountOnClick = () => deleteAccount!(account.id!);
 
-	const dateFormatted = FormatDate(date, { day: "2-digit" });
+	const dateFormatted = FormatDate(account.date, { day: "2-digit" });
+
+
+	const editValue = (event: FocusEvent<HTMLTableDataCellElement, Element>
+		) => {
+
+		const { textContent } = event.currentTarget as Element
+
+		setData(data => ({ ...data, name: textContent || '' }))
+	}
 
 	return (
 		<tr {...props} className={styles.row}>
-			<td className={styles.cell} >{dateFormatted}</td>
-			<td className={styles.cell} >{name}</td>
-			<td className={styles.cell} >R$ {transformCurrency(total)}</td>
-			<td className={styles.cell} >
-				<TrashIcon className={styles.trashIcon} onClick={deleteAccountOnClick} />
+			<td className={styles.cell}>{dateFormatted}</td>
+			<td className={styles.cell} contentEditable onBlur={editValue} >
+				{data.name}
+			</td>
+			<td className={styles.cell}>R$ {transformCurrency(account.total)}</td>
+			<td className={styles.cell}>
+				<TrashIcon
+					className={styles.trashIcon}
+					onClick={deleteAccountOnClick}
+				/>
 			</td>
 		</tr>
 	);
 }
-
