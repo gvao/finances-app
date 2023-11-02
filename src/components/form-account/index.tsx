@@ -21,7 +21,6 @@ function useFormAccount() {
 		changeShowForm();
 
 		alert(`Enviado nova despesa no extrato!`)
-		console.log(data)
 
 		elem.reset();
 	};

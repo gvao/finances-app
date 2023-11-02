@@ -11,15 +11,12 @@ export default async function localStorageRepository(
 
 	const save = () => {
 		localStorage.setItem(repositoryName, JSON.stringify(accounts));
-    console.log('save accounts')
 	};
 
 	const sortAccounts = () => {
 		accounts.sort(
 			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-		)
-
-    console.log('sorting accounts')
+		);
 	};
 
 	observer.subscribe(sortAccounts);
