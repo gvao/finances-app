@@ -50,9 +50,25 @@ export default async function localStorageRepository(
 		observer.emit();
 	}
 
+	async function updatedById(id: string, AccountWithUpdate: Account): Promise<Account> {
+		const index = accounts.findIndex(account => account.id === id)
+		const accountSelected = accounts[index]
+		const accountUpdated = {
+			...accountSelected,
+			...AccountWithUpdate,
+			updatedAt: new Date().toISOString(),
+		}
+
+		accounts.splice(index, 1, accountUpdated)
+		save()
+
+		return accountUpdated
+	}
+
 	return {
 		add,
 		getAll,
 		deleteById,
+		updatedById,
 	};
 }

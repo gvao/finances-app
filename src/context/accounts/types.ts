@@ -14,4 +14,5 @@ export type AccountContextProps = {
 	currentDate: Date;
 	balance: number;
 	accounts: Account[];
+	updateAccount: (id: string, AccountWithUpdate: Account) => Promise<void>;
 };

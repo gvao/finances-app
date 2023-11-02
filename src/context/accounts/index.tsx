@@ -9,6 +9,8 @@ import {
 	insertAccount,
 } from "../../core/account/use-cases/index.ts";
 
+import { updateAccountById } from "../../core/account/use-cases";
+
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
 import { FormatDate } from "../../utils/date.ts";
@@ -38,19 +40,6 @@ const useAccountContextProvider = () => {
 		})();
 	}, []);
 
-	const getAccountByMonth = (date: Date) =>
-		accounts.filter((account) => {
-			const isMonthMatch =
-				date.getMonth() + 1 ===
-				Number(FormatDate(account.date, { month: "2-digit" }));
-
-			const isYearMatch =
-				date.getFullYear() ===
-				Number(FormatDate(account.date, { year: "numeric" }));
-
-			return isMonthMatch && isYearMatch;
-		});
-
 	async function addAccount(newAccount: Partial<Account>) {
 		const createdAccount = await insertAccount(
 			await repository,
@@ -63,6 +52,35 @@ const useAccountContextProvider = () => {
 		deleteAccountById(await repository, id);
 		setAccounts((state) => state.filter((account) => account.id !== id));
 	}
+
+	async function updateAccount(id: string, AccountWithUpdate: Account) {
+		const newAccount = await updateAccountById(
+			await repository,
+			id,
+			AccountWithUpdate
+		);
+		const accountList = accounts;
+		const index = accountList.findIndex(
+			(account) => account.id === newAccount.id
+		);
+		const accountUpdated = accountList[index];
+
+		accountList.splice(index, 1, accountUpdated);
+		setAccounts(accountList);
+	}
+
+	const getAccountByMonth = (date: Date) =>
+		accounts.filter((account) => {
+			const isMonthMatch =
+				date.getMonth() + 1 ===
+				Number(FormatDate(account.date, { month: "2-digit" }));
+
+			const isYearMatch =
+				date.getFullYear() ===
+				Number(FormatDate(account.date, { year: "numeric" }));
+
+			return isMonthMatch && isYearMatch;
+		});
 
 	const nextMonth = () => setCurrentMonth((month) => month + 1);
 
@@ -77,13 +95,14 @@ const useAccountContextProvider = () => {
 	);
 
 	return {
-		accounts: getAccountByMonth(currentDate),
 		addAccount,
 		deleteAccount,
-		nextMonth,
-		prevMonth,
+		updateAccount,
 		currentDate,
 		balance,
+		accounts: getAccountByMonth(currentDate),
+		nextMonth,
+		prevMonth,
 	};
 };
 
@@ -98,6 +117,7 @@ export default function ProviderAccountContext({
 		prevMonth,
 		currentDate,
 		balance,
+		updateAccount,
 	} = useAccountContextProvider();
 
 	const [showForm, setShowForm] = useState<boolean>(false);
@@ -112,6 +132,7 @@ export default function ProviderAccountContext({
 				deleteAccount,
 				nextMonth,
 				prevMonth,
+				updateAccount,
 				currentDate,
 				balance,
 
