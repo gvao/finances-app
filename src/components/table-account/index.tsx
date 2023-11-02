@@ -4,7 +4,7 @@ import { transformCurrency, FormatDate } from "../../utils";
 
 import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
-import { FocusEvent, useState } from "react";
+import { FocusEvent } from "react";
 
 export const TableExpenses = () => {
 	const { accounts } = useAccountContext();
@@ -29,29 +29,37 @@ export const TableExpenses = () => {
 };
 
 function TableRow({ account, ...props }: { account: Account }) {
-	const [ data, setData ] = useState(account)
-	const { deleteAccount } = useAccountContext();
+	const { deleteAccount, updateAccount } = useAccountContext();
 
 	const deleteAccountOnClick = () => deleteAccount!(account.id!);
 
 	const dateFormatted = FormatDate(account.date, { day: "2-digit" });
 
-
-	const editValue = (event: FocusEvent<HTMLTableDataCellElement, Element>
-		) => {
-
-		const { textContent } = event.currentTarget as Element
-
-		setData(data => ({ ...data, name: textContent || '' }))
-	}
+	const updateAccountName = async (
+		event: FocusEvent<HTMLTableDataCellElement, Element>
+	) => {
+		const { textContent } = event.currentTarget as Element;
+		
+		const newValue = { ...account, name: textContent || "" }
+		
+		await updateAccount(account.id!, newValue)
+	};
 
 	return (
 		<tr {...props} className={styles.row}>
 			<td className={styles.cell}>{dateFormatted}</td>
-			<td className={styles.cell} contentEditable onBlur={editValue} >
-				{data.name}
+			<td
+				className={styles.cell}
+				contentEditable
+				suppressContentEditableWarning
+				onBlur={updateAccountName}
+				id={'name'}
+			>
+				{account.name}
 			</td>
-			<td className={styles.cell}>R$ {transformCurrency(account.total)}</td>
+			<td className={styles.cell}>
+				R$ {transformCurrency(account.total)}
+			</td>
 			<td className={styles.cell}>
 				<TrashIcon
 					className={styles.trashIcon}
