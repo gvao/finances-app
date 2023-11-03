@@ -4,29 +4,25 @@ import { ChevronLeft, ChevronRight } from "../../utils/icons";
 import styles from "./styles.module.css";
 
 export const MonthSummary = () => {
-	const { nextMonth, prevMonth, balance, currentDate } =
-		useAccountContext();
+	const { nextMonth, prevMonth, balance, currentDate } = useAccountContext();
 
-	const totalValue = balance
-
-	const labelMonth = FormatDate(currentDate, {
-		month: "long",
-		year: "numeric",
-	});
+	const month = FormatDate(currentDate, { month: 'long' });
+	const year = currentDate.getFullYear();
 
 	return (
 		<div className={styles.wrap}>
+				<span className={styles.value}>
+					R$ {transformCurrency(balance)}
+				</span>
 			<div className={styles.actions}>
 				<ChevronLeft className={styles.icon} onClick={prevMonth} />
-				<h2>{labelMonth}</h2>
+				<h2>
+					{month} / {year}
+				</h2>
 				<ChevronRight className={styles.icon} onClick={nextMonth} />
 			</div>
 
-			<div>
-				<span className={styles.value}>
-					R$ {transformCurrency(totalValue)}
-				</span>
-			</div>
+			<div></div>
 		</div>
 	);
 };
