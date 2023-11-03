@@ -14,6 +14,7 @@ import { updateAccountById } from "../../core/account/use-cases";
 import styles from "./styles.module.css";
 import { FormAccount, Popup } from "../../components";
 import { FormatDate } from "../../utils/date.ts";
+import EventEmitter from "../../utils/emitter/index.ts";
 
 const INITIAL = {
 	accounts: [],
@@ -23,22 +24,32 @@ export const AccountContext = createContext({} as AccountContextProps);
 export const useAccountContext = () => useContext(AccountContext);
 
 const useAccountContextProvider = () => {
+	const eventEmitter = new EventEmitter();
 	const repository = localStorageRepository("accounts");
-	const indexMonth = new Date().getMonth();
+	const initialIndexMonth = new Date().getMonth();
 
-	const [currentMonth, setCurrentMonth] = useState<number>(indexMonth);
+	const [currentMonth, setCurrentMonth] = useState<number>(initialIndexMonth);
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
-
-	const currentDate = new Date();
-	currentDate.setMonth(currentMonth);
+	const [balance, setBalance] = useState<number>(0);
 
 	useEffect(() => {
 		(async () => {
 			const allAccounts = await getAllAccounts(await repository);
 
 			setAccounts(allAccounts);
+			updateBalance();
 		})();
 	}, []);
+	
+	const getDateToMonth = (currentMonth: number) => {
+		const date = new Date();
+		date.setMonth(currentMonth);
+		return date;
+	};
+
+	const nextMonth = () => setCurrentMonth((month) => month + 1);
+
+	const prevMonth = () => setCurrentMonth((month) => month - 1);
 
 	async function addAccount(newAccount: Partial<Account>) {
 		const createdAccount = await insertAccount(
@@ -48,28 +59,15 @@ const useAccountContextProvider = () => {
 		setAccounts((state) => [...state, createdAccount]);
 	}
 
-	async function deleteAccount(id: string) {
-		deleteAccountById(await repository, id);
-		setAccounts((state) => state.filter((account) => account.id !== id));
+	async function deleteAccount({ id }: Account) {
+		eventEmitter.emit("deleteAccount", { id });
 	}
 
 	async function updateAccount(id: string, AccountWithUpdate: Account) {
-		const newAccount = await updateAccountById(
-			await repository,
-			id,
-			AccountWithUpdate
-		);
-		const accountList = accounts;
-		const index = accountList.findIndex(
-			(account) => account.id === newAccount.id
-		);
-		const accountUpdated = accountList[index];
-
-		accountList.splice(index, 1, accountUpdated);
-		setAccounts(accountList);
+		eventEmitter.emit("updateAccount", { id, AccountWithUpdate });
 	}
 
-	const getAccountByMonth = (date: Date) =>
+	const getAccountByMonthDate = (date: Date) =>
 		accounts.filter((account) => {
 			const isMonthMatch =
 				date.getMonth() + 1 ===
@@ -82,25 +80,67 @@ const useAccountContextProvider = () => {
 			return isMonthMatch && isYearMatch;
 		});
 
-	const nextMonth = () => setCurrentMonth((month) => month + 1);
-
-	const prevMonth = () => setCurrentMonth((month) => month - 1);
-
-	const balance = accounts
-		.filter((account) => new Date(account.date).getMonth() <= currentMonth)
-		.reduce((acc, account) => acc + +account.total, 0);
+	const getBalance = (monthAccount: Account[]) =>
+		monthAccount.reduce((acc, account) => acc + +account.total, 0);
 
 	accounts.sort(
 		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
 	);
 
+	const monthAccount = getAccountByMonthDate(getDateToMonth(currentMonth));
+	const updateBalance = () => {
+		const balance = getBalance(monthAccount);
+		setBalance(balance);
+	};
+
+	useEffect(() => {
+		updateBalance()
+	}, [accounts, currentMonth])
+
+	eventEmitter.on("changeAccount",() =>  {
+		eventEmitter.emit("updateBalance")
+	});
+	
+	eventEmitter.on("updateBalance", updateBalance);
+	eventEmitter.on("updateAccount", async function (props) {
+		if (props) {
+			const { id, AccountWithUpdate } = props as {
+				id: string;
+				AccountWithUpdate: Account;
+			};
+			const newAccount = await updateAccountById(
+				await repository,
+				id,
+				AccountWithUpdate
+			);
+			const accountList = accounts;
+			const index = accountList.findIndex(
+				(account) => account.id === newAccount.id
+			);
+			const accountUpdated = accountList[index];
+
+			accountList.splice(index, 1, accountUpdated);
+			setAccounts(accountList);
+		}
+
+		eventEmitter.emit("changeAccount");
+	});
+
+	eventEmitter.on("deleteAccount", async function (props) {
+		const { id } = props as { id: string };
+		deleteAccountById(await repository, id!);
+		setAccounts((state) => state.filter((account) => account.id !== id));
+
+		eventEmitter.emit("changeAccount");
+	});
+
 	return {
 		addAccount,
 		deleteAccount,
 		updateAccount,
-		currentDate,
+		currentDate: getDateToMonth(currentMonth),
 		balance,
-		accounts: getAccountByMonth(currentDate),
+		accounts: monthAccount,
 		nextMonth,
 		prevMonth,
 	};
