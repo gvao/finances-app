@@ -4,103 +4,81 @@ import { transformCurrency, FormatDate } from "../../utils";
 
 import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
-import { FocusEvent, FormEvent, useState } from "react";
+import TableContextProvider, { useTableContext } from "./context";
+import { FormEvent, useState } from "react";
 
 export const TableExpenses = () => {
-	const { accounts } = useAccountContext();
-
 	return (
 		<table className={styles.table}>
-			<thead>
-				<tr>
-					<th>Dia</th>
-					<th>Descrição</th>
-					<th>Valor</th>
-					<th>actions</th>
-				</tr>
-			</thead>
-			<tbody className={styles.body}>
-				{accounts.map((account) => (
-					<TableRow key={account.id} account={account} />
-				))}
-			</tbody>
+			<TableContextProvider>
+				<thead>
+					<tr>
+						<th>Dia</th>
+						<th>Descrição</th>
+						<th>Valor</th>
+						<th>actions</th>
+					</tr>
+				</thead>
+
+				<TableBody />
+			</TableContextProvider>
 		</table>
 	);
 };
 
+function TableBody() {
+	const { accounts } = useAccountContext();
+
+	return (
+		<tbody className={styles.body}>
+			{accounts.map((account) => (
+				<TableRow key={account.id} account={account} />
+			))}
+		</tbody>
+	);
+}
+
 function TableRow({ account, ...props }: { account: Account }) {
-	const [data, setData] = useState(account);
-	const [total, setTotal] = useState(data.total);
+	const [total, setTotal] = useState(account.total);
 
-	const { deleteAccount, updateAccount } = useAccountContext();
+	const { deleteAccount } = useAccountContext();
+	const { updateAccountProperty, validateNumber } = useTableContext();
 
-	const dateDay = FormatDate(data.date, { day: "2-digit" });
+	const { setName, setTotalValue } = updateAccountProperty(account);
+	const deleteAccountOnClick = () => deleteAccount(account);
 
-	const deleteAccountOnClick = () => deleteAccount!(data.id!);
-
-	const updateAccountName = async (
-		event: FocusEvent<HTMLTableDataCellElement, Element>
-	) => {
-		const { textContent } = event.currentTarget as Element;
-
-		const newValue = { ...account, name: textContent || "" };
-
-		await updateAccount(data.id!, newValue);
-		setData(newValue);
-	};
-
-	const updateAccountTotal = async (
-		event: FocusEvent<HTMLTableDataCellElement, Element>
-	) => {
-		const target = event.currentTarget;
-		target.textContent = `R$ ${transformCurrency(data.total)}`;
-		
-		const newValue = { ...data, total };
-		setData(newValue);
-
-		await updateAccount(data.id!, newValue);
-	};
-
-	const convertPriceInNumber = (textContent: string | null) =>
-		Number(textContent?.replace("R$ ", "").replace(",", ".").trim());
-
-	const validateNumber = (event: FormEvent<HTMLTableDataCellElement>) => {
-		const numberSet = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+	const onInput = setTotalValue(total);
+	const inputNumber = (event: FormEvent<HTMLTableDataCellElement>) => {
 		const { textContent } = event.currentTarget;
-		const filterNumbers = (character: string) =>
-			character === "," || numberSet.includes(Number(character));
-
-		const number = textContent!
-			.split("")
-			.filter(filterNumbers)
-			.join("")
-			.trim();
-		const price = convertPriceInNumber(number);
-		setTotal(price);
+		
+		const number = validateNumber(textContent);
+		if (number) setTotal(number);
 	};
+	
+	const day = FormatDate(account.date, { day: "2-digit" });
 
 	return (
 		<tr {...props} className={styles.row}>
-			<td className={styles.cell}>{dateDay}</td>
+			<td className={styles.cell}>{day}</td>
 
 			<td
 				className={styles.cell}
 				contentEditable
 				suppressContentEditableWarning
-				onBlur={updateAccountName}
+				onBlur={setName}
 				id={"name"}
 			>
-				{data.name}
+				{account.name}
 			</td>
 
 			<td
 				className={styles.cell}
-				onBlur={updateAccountTotal}
-				onInput={validateNumber}
+				onBlur={onInput}
+				onInput={inputNumber}
 				contentEditable
 				suppressContentEditableWarning
 			>
-				R$ {transformCurrency(data.total)}
+				R$ {transformCurrency(total)}
 			</td>
 			<td className={styles.cell}>
 				<TrashIcon
