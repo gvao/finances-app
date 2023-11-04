@@ -1,21 +1,10 @@
-import { createContext, FocusEvent, useContext } from "react";
+import { createContext, useContext } from "react";
 import { useAccountContext } from "../../context/accounts";
-import { transformCurrency } from "../../utils";
 import { Account } from "../../core/account";
+import EventEmitter from "../../utils/emitter";
 
 type TableProps = {
-	updateAccountProperty: (account: Account) => {
-		setName: (
-			event: FocusEvent<HTMLTableDataCellElement, Element>
-		) => Promise<void>;
-		setTotalValue: (
-			total: number
-		) => (
-			event: FocusEvent<HTMLTableDataCellElement, Element>
-		) => Promise<void>;
-	};
-    validateNumber: (input: string | null) => number | null;
-
+	updateAccountProperty: (account: Account, newAccount: Account) => void;
 };
 
 const TableContext = createContext<TableProps>({} as TableProps);
@@ -26,60 +15,29 @@ export default function TableContextProvider({
 }: {
 	children: React.ReactNode;
 }) {
+	const emitter = new EventEmitter();
+
 	const { updateAccount } = useAccountContext();
 
-	const updateAccountProperty = (account: Account) => {
-		const setName = async (
-			event: FocusEvent<HTMLTableDataCellElement, Element>
-		) => {
-			const { textContent } = event.currentTarget as Element;
+	const updateAccountProperty = (account: Account, newAccount: Account) => {
+		emitter.emit("updateAccount", { account, newAccount });
+	};
 
-			const newValue = { ...account, name: textContent || "" };
+	emitter.on("updateAccount", async (props) => {
 
-			await updateAccount(account.id!, newValue);
+		const { account, newAccount } = props as {
+			account: Account;
+			newAccount: Account;
 		};
+		await updateAccount(account.id!, newAccount);
 
-		const setTotalValue = (total: number) =>
-			async (event: FocusEvent<HTMLTableDataCellElement, Element>) => 
-            {
-				const target = event.currentTarget;
-				target.textContent = `R$ ${transformCurrency(total)}`;
-
-				const newValue = { ...account, total };
-
-				await updateAccount(account.id!, newValue);
-			};
-
-		return {
-			setName,
-			setTotalValue,
-		};
-	};
-
-	const convertTextInNumber = (textContent: string | null) =>
-		Number(textContent?.replace("R$ ", "").replace(",", ".").trim());
-
-	const getSomeNumbers = (input?: string) => {
-		if (!input) throw new Error('Input does not contain numbers');
-		const numberSet = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-		const filterNumbers = (character: string) =>
-			character === "," || numberSet.includes(Number(character));
-
-		return input!.split("").filter(filterNumbers).join("").trim();
-	};
-
-	const validateNumber = (input: string | null) => {
-        if(!input) return null
-
-		return convertTextInNumber(getSomeNumbers(input));
-	};
+		console.log(`save update`, newAccount)
+	});
 
 	return (
 		<TableContext.Provider
 			value={{
 				updateAccountProperty,
-				validateNumber,
 			}}
 		>
 			{children}

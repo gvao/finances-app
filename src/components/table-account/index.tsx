@@ -6,6 +6,8 @@ import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
 import TableContextProvider, { useTableContext } from "./context";
 import { FormEvent, useState } from "react";
+import { validateNumber } from "../../utils/number";
+import EventEmitter from "../../utils/emitter";
 
 export const TableExpenses = () => {
 	return (
@@ -39,23 +41,36 @@ function TableBody() {
 }
 
 function TableRow({ account, ...props }: { account: Account }) {
-	const [total, setTotal] = useState(account.total);
+	const emitter = new EventEmitter()
+	const [data, setData] = useState(account);
 
 	const { deleteAccount } = useAccountContext();
-	const { updateAccountProperty, validateNumber } = useTableContext();
+	const { updateAccountProperty } = useTableContext();
 
-	const { setName, setTotalValue } = updateAccountProperty(account);
 	const deleteAccountOnClick = () => deleteAccount(account);
 
-	const onInput = setTotalValue(total);
-	const inputNumber = (event: FormEvent<HTMLTableDataCellElement>) => {
-		const { textContent } = event.currentTarget;
-		
-		const number = validateNumber(textContent);
-		if (number) setTotal(number);
+	const onBlur = (event: FormEvent<HTMLTableDataCellElement>) => {
+		const { textContent, id } = event.currentTarget;
+
+		if (id === "total") {
+			const result = validateNumber(textContent);
+			console.log(result)
+			if (result) setData({ ...data, [id]: result });
+			const currencyValue = transformCurrency(result!)
+			event.currentTarget.textContent = `R$ ${currencyValue}`;
+		} else {
+			setData({ ...data, [id]: textContent });
+		}
+		emitter.emit('update')
 	};
-	
-	const day = FormatDate(account.date, { day: "2-digit" });
+
+
+	emitter.on(`update`, () => {
+		console.log(`event update`, data)
+		updateAccountProperty(account, data);
+	})
+
+	const day = FormatDate(data.date, { day: "2-digit" });
 
 	return (
 		<tr {...props} className={styles.row}>
@@ -65,20 +80,21 @@ function TableRow({ account, ...props }: { account: Account }) {
 				className={styles.cell}
 				contentEditable
 				suppressContentEditableWarning
-				onBlur={setName}
-				id={"name"}
+				onBlur={onBlur}
+				id="name"
 			>
-				{account.name}
+				{data.name}
 			</td>
 
 			<td
 				className={styles.cell}
-				onBlur={onInput}
-				onInput={inputNumber}
+				onBlur={onBlur}
+				// onInput={onInput}
 				contentEditable
 				suppressContentEditableWarning
+				id="total"
 			>
-				R$ {transformCurrency(total)}
+				R$ {transformCurrency(data.total)}
 			</td>
 			<td className={styles.cell}>
 				<TrashIcon
