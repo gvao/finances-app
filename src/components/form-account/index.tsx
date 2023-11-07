@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useAccountContext } from "../../context/accounts";
 import { Account } from "../../core/account";
+import { Input } from "../common";
 
 function useFormAccount() {
 	const [data, setData] = useState<Partial<Account>>({
@@ -20,7 +21,7 @@ function useFormAccount() {
 		addAccount(data);
 		changeShowForm();
 
-		alert(`Enviado nova despesa no extrato!`)
+		alert(`Enviado nova despesa no extrato!`);
 
 		elem.reset();
 	};
@@ -41,26 +42,23 @@ function useFormAccount() {
 export function FormAccount() {
 	const { data, onSubmit, onChangeInput } = useFormAccount();
 
-	const [dateDefault] = data.date!.split('.')
+	const [dateDefault] = data.date!.split(".");
 
 	return (
 		<form onSubmit={onSubmit} className={styles.formComponent}>
 			<h2>Adicionar conta</h2>
 
 			<div className={styles.inputs}>
-				<input
+				<Input
 					onChange={onChangeInput}
-					className={styles.field}
-					type="text"
 					name="name"
 					id="name"
 					placeholder="Titulo para conta"
 					value={data.name}
 					autoFocus
 				/>
-				<input
+				<Input
 					onChange={onChangeInput}
-					className={styles.field}
 					type="number"
 					step={0.05}
 					name="total"
@@ -68,14 +66,19 @@ export function FormAccount() {
 					placeholder="Valor da conta"
 					value={data.total}
 				/>
-
-				<input
-					className={styles.field}
-					type="datetime-local"
-					name="date"
-					id="date"
+				<Input
 					onChange={onChangeInput}
 					value={dateDefault || ""}
+					type="date"
+					name="date"
+					id="date"
+				/>
+				<Input
+					onChange={onChangeInput}
+					value={dateDefault || ""}
+					type="time"
+					name="date"
+					id="date"
 				/>
 			</div>
 
@@ -85,3 +88,4 @@ export function FormAccount() {
 		</form>
 	);
 }
+

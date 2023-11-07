@@ -1,0 +1,6 @@
+.field {
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-default);
+    flex-grow: 1;
+}
