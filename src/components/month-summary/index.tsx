@@ -16,7 +16,9 @@ export const MonthSummary = () => {
 				</span>
 			<div className={styles.actions}>
 				<ChevronLeft className={styles.icon} onClick={prevMonth} />
-				<h2>
+				<h2 style={{
+					whiteSpace: "nowrap",
+				}} >
 					{month} / {year}
 				</h2>
 				<ChevronRight className={styles.icon} onClick={nextMonth} />
