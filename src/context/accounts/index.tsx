@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+	SVGProps,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 import { AccountContextProps, ProviderAccountContextProps } from "./types.ts";
 import { Account } from "../../core/account/model.ts";
@@ -44,7 +50,7 @@ const useAccountContextProvider = () => {
 	accounts.sort(
 		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
 	);
-	
+
 	const getDateToMonth = (currentMonth: number) => {
 		const date = new Date();
 		date.setMonth(currentMonth);
@@ -86,32 +92,33 @@ const useAccountContextProvider = () => {
 
 	const getBalance = (accounts: Account[]) =>
 		accounts.reduce((acc, account) => {
-
-			const result = acc + +account.total
+			const result = acc + +account.total;
 			// console.log(acc, '+', +account.total, '=', result)
 
-			return result
+			return result;
 		}, 0);
-
 
 	const monthAccount = getAccountByMonthDate(getDateToMonth(currentMonth));
 
 	const updateBalance = () => {
-		const accountsFiltered = accounts.filter(account => {
-			return new Date(account.date).getMonth() <= getDateToMonth(currentMonth).getMonth()
-		})
+		const accountsFiltered = accounts.filter((account) => {
+			return (
+				new Date(account.date).getMonth() <=
+				getDateToMonth(currentMonth).getMonth()
+			);
+		});
 		const balance = getBalance(accountsFiltered);
 		setBalance(balance);
 	};
 
 	useEffect(() => {
-		updateBalance()
-	}, [accounts, currentMonth])
+		updateBalance();
+	}, [accounts, currentMonth]);
 
-	eventEmitter.on("changeAccount",() =>  {
-		eventEmitter.emit("updateBalance")
+	eventEmitter.on("changeAccount", () => {
+		eventEmitter.emit("updateBalance");
 	});
-	
+
 	eventEmitter.on("updateBalance", updateBalance);
 	eventEmitter.on("updateAccount", async function (props) {
 		if (props) {
@@ -173,8 +180,6 @@ export default function ProviderAccountContext({
 
 	const [showForm, setShowForm] = useState<boolean>(false);
 
-	const changeShowForm = () => setShowForm((state) => !state);
-
 	return (
 		<AccountContext.Provider
 			value={{
@@ -186,16 +191,14 @@ export default function ProviderAccountContext({
 				updateAccount,
 				currentDate,
 				balance,
-
-				changeShowForm,
 			}}
 		>
 			{children}
 
-			<AddButton />
+			<AddButton onClick={() => setShowForm(true)} />
 
 			{showForm && (
-				<Popup>
+				<Popup onClose={() => setShowForm(false)} >
 					<FormAccount />
 				</Popup>
 			)}
@@ -203,12 +206,11 @@ export default function ProviderAccountContext({
 	);
 }
 
-const AddButton = () => {
-	const { changeShowForm } = useAccountContext();
+const AddButton = ({ ...props }: SVGProps<SVGSVGElement>) => {
 
 	return (
 		<svg
-			onClick={changeShowForm}
+			{...props}
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
 			fill="currentColor"

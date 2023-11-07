@@ -120,7 +120,7 @@ const ButtonDelete = ({ onConfirm, ...props }: { onConfirm(): void }) => {
 				{...props}
 			/>
 			{showPopup && (
-				<Popup>
+				<Popup onClose={() => onCancelClick()} >
 					<p>Deseja excluir o item?</p>
 					<div className="actions">
 						<Button onClick={onConfirmClick}>Confirmar</Button>

@@ -8,7 +8,6 @@ export type ProviderAccountContextProps = {
 export type AccountContextProps = {
 	addAccount(newAccount: Partial<Account>): void;
 	deleteAccount(account: Account): void;
-	changeShowForm(): void;
 	nextMonth(): void;
 	prevMonth(): void;
 	currentDate: Date;
