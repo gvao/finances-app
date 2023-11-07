@@ -29,9 +29,8 @@ export default function TableContextProvider({
 			account: Account;
 			newAccount: Account;
 		};
-		await updateAccount(account.id!, newAccount);
 
-		console.log(`save update`, newAccount)
+		await updateAccount(account.id!, newAccount);
 	});
 
 	return (

@@ -40,6 +40,10 @@ const useAccountContextProvider = () => {
 			updateBalance();
 		})();
 	}, []);
+
+	accounts.sort(
+		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+	);
 	
 	const getDateToMonth = (currentMonth: number) => {
 		const date = new Date();
@@ -80,16 +84,23 @@ const useAccountContextProvider = () => {
 			return isMonthMatch && isYearMatch;
 		});
 
-	const getBalance = (monthAccount: Account[]) =>
-		monthAccount.reduce((acc, account) => acc + +account.total, 0);
+	const getBalance = (accounts: Account[]) =>
+		accounts.reduce((acc, account) => {
 
-	accounts.sort(
-		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-	);
+			const result = acc + +account.total
+			// console.log(acc, '+', +account.total, '=', result)
+
+			return result
+		}, 0);
+
 
 	const monthAccount = getAccountByMonthDate(getDateToMonth(currentMonth));
+
 	const updateBalance = () => {
-		const balance = getBalance(monthAccount);
+		const accountsFiltered = accounts.filter(account => {
+			return new Date(account.date).getMonth() <= getDateToMonth(currentMonth).getMonth()
+		})
+		const balance = getBalance(accountsFiltered);
 		setBalance(balance);
 	};
 

@@ -5,9 +5,8 @@ import { transformCurrency, FormatDate } from "../../utils";
 import styles from "./styles.module.css";
 import { TrashIcon } from "../../utils/icons";
 import TableContextProvider, { useTableContext } from "./context";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { validateNumber } from "../../utils/number";
-import EventEmitter from "../../utils/emitter";
 
 export const TableExpenses = () => {
 	return (
@@ -41,7 +40,6 @@ function TableBody() {
 }
 
 function TableRow({ account, ...props }: { account: Account }) {
-	const emitter = new EventEmitter()
 	const [data, setData] = useState(account);
 
 	const { deleteAccount } = useAccountContext();
@@ -50,25 +48,23 @@ function TableRow({ account, ...props }: { account: Account }) {
 	const deleteAccountOnClick = () => deleteAccount(account);
 
 	const onBlur = (event: FormEvent<HTMLTableDataCellElement>) => {
-		const { textContent, id } = event.currentTarget;
+		const { currentTarget: target } = event;
 
-		if (id === "total") {
-			const result = validateNumber(textContent);
-			console.log(result)
-			if (result) setData({ ...data, [id]: result });
-			const currencyValue = transformCurrency(result!)
+		if (target.id === "total") {
+			const result = validateNumber(target.textContent);
+
+			setData((state) => ({ ...state, [target.id]: result }));
+
+			const currencyValue = transformCurrency(result!);
 			event.currentTarget.textContent = `R$ ${currencyValue}`;
 		} else {
-			setData({ ...data, [id]: textContent });
+			setData((state) => ({ ...state, [target.id]: target.textContent }));
 		}
-		emitter.emit('update')
 	};
-
-
-	emitter.on(`update`, () => {
-		console.log(`event update`, data)
+	
+	useEffect(() => {
 		updateAccountProperty(account, data);
-	})
+	}, [data]);
 
 	const day = FormatDate(data.date, { day: "2-digit" });
 
