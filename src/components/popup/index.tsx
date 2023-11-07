@@ -14,7 +14,7 @@ export function Popup({ children }: { children: React.ReactNode }) {
 
 	return (
 		<section onClick={onclick} className={styles.wrapper}>
-			<div className={styles.popup}>{children}</div>
+			<div className={`container ${styles.popup}`}>{children}</div>
 		</section>
 	);
 }

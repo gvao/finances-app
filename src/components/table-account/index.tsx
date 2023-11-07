@@ -7,6 +7,8 @@ import { TrashIcon } from "../../utils/icons";
 import TableContextProvider, { useTableContext } from "./context";
 import { FormEvent, useState, useEffect } from "react";
 import { validateNumber } from "../../utils/number";
+import { Popup } from "..";
+import Button from "../common/button";
 
 export const TableExpenses = () => {
 	return (
@@ -61,7 +63,7 @@ function TableRow({ account, ...props }: { account: Account }) {
 			setData((state) => ({ ...state, [target.id]: target.textContent }));
 		}
 	};
-	
+
 	useEffect(() => {
 		updateAccountProperty(account, data);
 	}, [data]);
@@ -93,11 +95,39 @@ function TableRow({ account, ...props }: { account: Account }) {
 				R$ {transformCurrency(data.total)}
 			</td>
 			<td className={styles.cell}>
-				<TrashIcon
-					className={styles.trashIcon}
-					onClick={deleteAccountOnClick}
-				/>
+				<ButtonDelete onConfirm={deleteAccountOnClick} />
 			</td>
 		</tr>
 	);
 }
+
+const ButtonDelete = ({ onConfirm, ...props }: { onConfirm(): void }) => {
+	const [showPopup, setShowPopup] = useState(false);
+
+	function onConfirmClick() {
+		onConfirm();
+	}
+
+	function onCancelClick() {
+		setShowPopup(false);
+	}
+
+	return (
+		<>
+			<TrashIcon
+				className={styles.trashIcon}
+				onClick={() => setShowPopup(!showPopup)}
+				{...props}
+			/>
+			{showPopup && (
+				<Popup>
+					<p>Deseja excluir o item?</p>
+					<div className="actions">
+						<Button onClick={onConfirmClick}>Confirmar</Button>
+						<Button onClick={onCancelClick}>Cancelar</Button>
+					</div>
+				</Popup>
+			)}
+		</>
+	);
+};

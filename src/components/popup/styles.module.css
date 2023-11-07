@@ -12,13 +12,17 @@
 
     display: flex;
     justify-content: center;
-    /* align-items: center; */
+    z-index: 10;
 }
 
 .popup {
     background-color: var(--color-secondary);
-    padding: var(--pad-default);
-    border-radius: var(--radius-default);
+
     height: fit-content;
+    width: 90%;
+
+    padding: var(--pad-default);
     margin-top: 40px;
+    
+    border-radius: var(--radius-default);
 }
