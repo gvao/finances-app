@@ -1,0 +1,18 @@
+@import url("./variables.css");
+@import url("./reset.css");
+
+html {
+    min-height: 100vh;
+}
+
+body,
+#root {
+    min-height: 100%;
+}
+
+body {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+
+    font-family: Arial, Helvetica, sans-serif;
+}
