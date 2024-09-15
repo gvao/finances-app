@@ -27,6 +27,7 @@ const INITIAL = {
 };
 
 export const AccountContext = createContext({} as AccountContextProps);
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAccountContext = () => useContext(AccountContext);
 
 const useAccountContextProvider = () => {
@@ -37,7 +38,9 @@ const useAccountContextProvider = () => {
 	const [currentMonth, setCurrentMonth] = useState<number>(initialIndexMonth);
 	const [accounts, setAccounts] = useState<Account[]>(INITIAL.accounts);
 	const [balance, setBalance] = useState<number>(0);
+	const [showForm, setShowForm] = useState<boolean>(false);
 
+	
 	useEffect(() => {
 		(async () => {
 			const allAccounts = await getAllAccounts(await repository);
@@ -57,6 +60,8 @@ const useAccountContextProvider = () => {
 		return date;
 	};
 
+	const toggleForm = () => setShowForm(state => !state)
+
 	const nextMonth = () => setCurrentMonth((month) => month + 1);
 
 	const prevMonth = () => setCurrentMonth((month) => month - 1);
@@ -67,6 +72,7 @@ const useAccountContextProvider = () => {
 			newAccount
 		);
 		setAccounts((state) => [...state, createdAccount]);
+		eventEmitter.emit('addedAccount')
 	}
 
 	async function deleteAccount({ id }: Account) {
@@ -118,7 +124,7 @@ const useAccountContextProvider = () => {
 	eventEmitter.on("changeAccount", () => {
 		eventEmitter.emit("updateBalance");
 	});
-
+	eventEmitter.on("addedAccount", toggleForm)
 	eventEmitter.on("updateBalance", updateBalance);
 	eventEmitter.on("updateAccount", async function (props) {
 		if (props) {
@@ -161,6 +167,8 @@ const useAccountContextProvider = () => {
 		accounts: monthAccount,
 		nextMonth,
 		prevMonth,
+		showForm,
+		toggleForm,
 	};
 };
 
@@ -176,9 +184,9 @@ export default function ProviderAccountContext({
 		currentDate,
 		balance,
 		updateAccount,
+		showForm,
+        toggleForm,
 	} = useAccountContextProvider();
-
-	const [showForm, setShowForm] = useState<boolean>(false);
 
 	return (
 		<AccountContext.Provider
@@ -191,14 +199,16 @@ export default function ProviderAccountContext({
 				updateAccount,
 				currentDate,
 				balance,
+				showForm,
+				toggleForm,
 			}}
 		>
 			{children}
 
-			<AddButton onClick={() => setShowForm(true)} />
 
+			{!showForm && <AddButton onClick={toggleForm} />}
 			{showForm && (
-				<Popup onClose={() => setShowForm(false)} >
+				<Popup onClose={toggleForm} >
 					<FormAccount />
 				</Popup>
 			)}

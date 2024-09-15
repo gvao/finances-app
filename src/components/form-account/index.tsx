@@ -12,14 +12,13 @@ function useFormAccount() {
 		date: new Date().toISOString(),
 	});
 
-	const { addAccount, changeShowForm } = useAccountContext();
+	const { addAccount } = useAccountContext();
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const elem = event.target as HTMLFormElement;
 
 		addAccount(data);
-		changeShowForm();
 
 		alert(`Enviado nova despesa no extrato!`);
 

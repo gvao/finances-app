@@ -14,4 +14,6 @@ export type AccountContextProps = {
 	balance: number;
 	accounts: Account[];
 	updateAccount: (id: string, AccountWithUpdate: Account) => Promise<void>;
+	showForm: boolean,
+	toggleForm(): void,
 };
