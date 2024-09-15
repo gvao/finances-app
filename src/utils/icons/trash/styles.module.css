@@ -1,10 +1,20 @@
 .trashIcon {
     width: 24px;
-    margin: 4px;
-
-    background-color: red;
     fill: var(--color-secondary);
+}
+
+.wrap {
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4px;
+    margin: 0 auto;
 
     border-radius: 6px;
     cursor: pointer;
+    background-color: rgb(252, 94, 94);
+
+    aspect-ratio: 1;
 }
